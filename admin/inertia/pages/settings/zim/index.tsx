@@ -1,20 +1,20 @@
-import { Head, Link } from '@inertiajs/react'
+import { Head } from '@inertiajs/react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import StyledTable from '~/components/StyledTable'
 import SettingsLayout from '~/layouts/SettingsLayout'
-import { ZimFilesEntry } from '../../../../types/zim'
 import api from '~/lib/api'
 import StyledButton from '~/components/StyledButton'
 import { useModals } from '~/context/ModalContext'
 import StyledModal from '~/components/StyledModal'
 import useServiceInstalledStatus from '~/hooks/useServiceInstalledStatus'
 import Alert from '~/components/Alert'
+import { FileEntry } from '../../../../types/files'
 
 export default function ZimPage() {
   const queryClient = useQueryClient()
   const { openModal, closeAllModals } = useModals()
   const { isInstalled } = useServiceInstalledStatus('nomad_kiwix_serve')
-  const { data, isLoading } = useQuery<ZimFilesEntry[]>({
+  const { data, isLoading } = useQuery<FileEntry[]>({
     queryKey: ['zim-files'],
     queryFn: getFiles,
   })
@@ -24,7 +24,7 @@ export default function ZimPage() {
     return res.data.files
   }
 
-  async function confirmDeleteFile(file: ZimFilesEntry) {
+  async function confirmDeleteFile(file: FileEntry) {
     openModal(
       <StyledModal
         title="Confirm Delete?"
@@ -47,7 +47,7 @@ export default function ZimPage() {
   }
 
   const deleteFileMutation = useMutation({
-    mutationFn: async (file: ZimFilesEntry) => api.deleteZimFile(file.name.replace('.zim', '')),
+    mutationFn: async (file: FileEntry) => api.deleteZimFile(file.name.replace('.zim', '')),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['zim-files'] })
     },
@@ -73,7 +73,7 @@ export default function ZimPage() {
               className="!mt-6"
             />
           )}
-          <StyledTable<ZimFilesEntry & { actions?: any }>
+          <StyledTable<FileEntry & { actions?: any }>
             className="font-semibold mt-4"
             rowLines={true}
             loading={isLoading}
