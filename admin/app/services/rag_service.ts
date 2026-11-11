@@ -69,6 +69,7 @@ export type EmbedSingleFileResult =
 export class RagService {
   private qdrant: QdrantClient | null = null
   private qdrantInitPromise: Promise<void> | null = null
+  private readonly configuredEmbeddingModel = process.env.NOMAD_EMBEDDING_MODEL?.trim() || EMBEDDING_MODEL_NAME
   private embeddingModelVerified = false
   private resolvedEmbeddingModel: string | null = null
   // Collections already verified this session (created + payload indexes in place).
@@ -77,7 +78,13 @@ export class RagService {
   private ensuredCollections = new Set<string>()
   public static UPLOADS_STORAGE_PATH = 'storage/kb_uploads'
   public static CONTENT_COLLECTION_NAME = 'nomad_knowledge_base'
-  public static EMBEDDING_DIMENSION = 768 // Nomic Embed Text v1.5 dimension is 768
+  public static EMBEDDING_DIMENSION = (() => {
+    const specified = Number(process.env.NOMAD_EMBEDDING_DIMENSION || '768')
+    if (!Number.isSafeInteger(specified) || specified < 64 || specified > 8192) {
+      throw new Error('NOMAD_EMBEDDING_DIMENSION must be an integer between 64 and 8192')
+    }
+    return specified
+  })()
   // Upper bound on distinct sources returned by Qdrant's facet API. Real
   // NOMADs cap out at a few hundred ZIM files + uploaded PDFs; 10k leaves
   // generous headroom without paying the cost of an unbounded request.
@@ -94,8 +101,8 @@ export class RagService {
   // (numbers, symbols, abbreviations) tokenize denser
   // than plain prose (~3), so 2 avoids context overflows
   // Nomic Embed Text v1.5 uses task-specific prefixes for optimal performance
-  public static SEARCH_DOCUMENT_PREFIX = 'search_document: '
-  public static SEARCH_QUERY_PREFIX = 'search_query: '
+  public static SEARCH_DOCUMENT_PREFIX = process.env.NOMAD_EMBEDDING_DOCUMENT_PREFIX ?? 'search_document: '
+  public static SEARCH_QUERY_PREFIX = process.env.NOMAD_EMBEDDING_QUERY_PREFIX ?? 'search_query: '
   public static EMBEDDING_BATCH_SIZE = 8 // Conservative batch size for low-end hardware
 
   constructor(
@@ -360,25 +367,33 @@ export class RagService {
       if (!this.embeddingModelVerified) {
         const allModels = await this.ollamaService.getModels(true)
         const embeddingModel =
-          allModels.find((model) => model.name === EMBEDDING_MODEL_NAME) ??
-          allModels.find((model) => model.name.toLowerCase().includes('nomic-embed-text'))
+          allModels.find((model) => model.name === this.configuredEmbeddingModel) ??
+          // Remote embedding endpoints may not advertise their models in /v1/models.
+          // An explicitly configured ID is validated by the actual /v1/embeddings call.
+          (process.env.NOMAD_EMBEDDING_MODEL
+            ? { name: this.configuredEmbeddingModel }
+            : allModels.find((model) => model.name.toLowerCase().includes('nomic-embed-text')))
 
         if (!embeddingModel) {
+          if (process.env.NOMAD_EMBEDDING_MODEL) {
+            logger.warn('[RAG] Configured embedding model unavailable: ' + this.configuredEmbeddingModel)
+            return null
+          }
           try {
-            const downloadResult = await this.ollamaService.downloadModel(EMBEDDING_MODEL_NAME)
+            const downloadResult = await this.ollamaService.downloadModel(this.configuredEmbeddingModel)
             if (!downloadResult.success) {
               throw new Error(downloadResult.message || 'Unknown error during model download')
             }
           } catch (modelError) {
             logger.error(
-              `[RAG] Embedding model ${EMBEDDING_MODEL_NAME} not found locally and failed to download:`,
+              `[RAG] Embedding model ${this.configuredEmbeddingModel} not found locally and failed to download:`,
               modelError
             )
             this.embeddingModelVerified = false
             return null
           }
         }
-        this.resolvedEmbeddingModel = embeddingModel?.name ?? EMBEDDING_MODEL_NAME
+        this.resolvedEmbeddingModel = embeddingModel?.name ?? this.configuredEmbeddingModel
         this.embeddingModelVerified = true
       }
 
@@ -438,7 +453,7 @@ export class RagService {
         )
 
         const response = await this.ollamaService.embed(
-          this.resolvedEmbeddingModel ?? EMBEDDING_MODEL_NAME,
+          this.resolvedEmbeddingModel ?? this.configuredEmbeddingModel,
           batch
         )
 
@@ -981,11 +996,15 @@ export class RagService {
       if (!this.embeddingModelVerified) {
         const allModels = await this.ollamaService.getModels(true)
         const embeddingModel =
-          allModels.find((model) => model.name === EMBEDDING_MODEL_NAME) ??
-          allModels.find((model) => model.name.toLowerCase().includes('nomic-embed-text'))
+          allModels.find((model) => model.name === this.configuredEmbeddingModel) ??
+          // Remote embedding endpoints may not advertise their models in /v1/models.
+          // An explicitly configured ID is validated by the actual /v1/embeddings call.
+          (process.env.NOMAD_EMBEDDING_MODEL
+            ? { name: this.configuredEmbeddingModel }
+            : allModels.find((model) => model.name.toLowerCase().includes('nomic-embed-text')))
 
         if (!embeddingModel) {
-          logger.warn(`[RAG] ${EMBEDDING_MODEL_NAME} not found. Cannot perform similarity search.`)
+          logger.warn(`[RAG] ${this.configuredEmbeddingModel} not found. Cannot perform similarity search.`)
           this.embeddingModelVerified = false
           return []
         }
@@ -1017,7 +1036,7 @@ export class RagService {
       }
 
       const response = await this.ollamaService.embed(
-        this.resolvedEmbeddingModel ?? EMBEDDING_MODEL_NAME,
+        this.resolvedEmbeddingModel ?? this.configuredEmbeddingModel,
         [prefixedQuery]
       )
 

@@ -13,9 +13,10 @@ export default class DocsController {
     }
 
     async show({ params, inertia }: HttpContext) {
-        const content = await this.docsService.parseFile(params.slug);
-        return inertia.render('docs/show', {
-            content,
-        });
+        const [content, contentFr] = await Promise.all([
+            this.docsService.parseFile(params.slug),
+            this.docsService.parseFile(params.slug, 'fr'),
+        ]);
+        return inertia.render('docs/show', { content, contentFr });
     }
 }

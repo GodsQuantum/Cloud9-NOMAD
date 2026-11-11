@@ -1,3 +1,36 @@
+<p align="center"><img src="docs/assets/cloud9-nomad-logo.svg" width="930" alt="Cloud9-NOMAD — Knowledge stays, connection optional"></p>
+
+### Real interface previews
+
+<p align="center">
+  <img src="docs/screenshots/cloud9-nomad-dashboard.png" width="69%" alt="Cloud9-NOMAD desktop command center in French">
+  <img src="docs/screenshots/cloud9-nomad-mobile.png" width="27%" alt="Cloud9-NOMAD responsive mobile knowledge dashboard">
+</p>
+
+<sub>Actual interface screenshots from a running instance. No credentials or user-private media are included. Network and identity text were checked/redacted before publication.</sub>
+
+<p align="center"><strong>Cloud9-NOMAD</strong> · a community-enhanced, upstream-compatible edition of <a href="https://github.com/Crosstalk-Solutions/project-nomad">Project NOMAD</a>.</p>
+<p align="center">
+  <a href="README.fr.md">🇫🇷 Français</a> ·
+  <a href="README.zh-CN.md">🇨🇳 简体中文</a> ·
+  <a href="docs/cloud9-community-features.md">What this edition adds</a>
+</p>
+
+### Extra capabilities over upstream Project NOMAD
+
+- **Responsive command center:** searchable application categories, favorites and compact navigation, with an optional low-power view.
+- **Richer home UI:** larger, responsive status cards, readiness cues and a resilience-focused page layout.
+- **French translations:** UI strings, offline knowledge catalog and human-readable guides; English remains supported.
+- **Offline learning/navigation:** shortcuts for education, resilience resources and local medical references that resolve through installed services and do not require a Cloud9 homelab.
+- **Configurable remote AI:** an OpenAI-compatible gateway, remote model checks and embeddings with token-based authentication; **no vendor or home-network URL is hardcoded**.
+- **Upstream-friendly builds:** all added functionality is kept as portable source changes, with focused QA scripts; no private deployment settings or media libraries are bundled.
+
+<p align="center"><img src="docs/cloud9-community-delta.svg" width="840" alt="Project NOMAD upstream plus UI, French education and portable AI enhancements"></p>
+
+These features are based on the reusable work originally developed for Cloud9, now published as a **new, sanitized community commit without any private source history**. No credentials, user accounts, internal hostnames, NAS mount points or production `.env` files are included. Upstream remains credited and licensed under Apache-2.0. This project is not affiliated with the original authors.
+
+---
+
 <div align="center">
 <img src="admin/public/nomad-primary.svg" width="200" alt="Project NOMAD"/>
 

@@ -208,6 +208,14 @@ export class OllamaService {
   private initPromise: Promise<void> | null = null
   private isOllamaNative: boolean | null = null
   private nativeProbe: Promise<boolean> | null = null
+  // Provider gateways may advertise 5000+ virtual models. Cache their successful
+  // catalogue briefly across request-scoped service instances; no polling or timers.
+  // Native Ollama inventories are deliberately not cached to keep pulls immediate.
+  private static remoteModelCache: {
+    url: string
+    expiresAt: number
+    models: NomadInstalledModel[]
+  } | null = null
   private activeDownloads: Map<string, Promise<{ success: boolean; message: string; retryable?: boolean }>> = new Map()
   // Memoized /api/show result per model name (see getModelInfo). A model's capabilities and
   // trained context length don't change at runtime. Only successful lookups are cached;
@@ -240,7 +248,7 @@ export class OllamaService {
         }
 
         this.openai = new OpenAI({
-          apiKey: 'nomad', // Required by SDK; not validated by Ollama/LM Studio/llama.cpp
+          apiKey: process.env.NOMAD_OPENAI_API_KEY?.trim() || 'nomad', // Scoped token for authenticated OpenAI-compatible gateways
           baseURL: `${this.baseUrl}/v1`,
         })
         // Native client for `/api/chat`. Only used when the backend is really Ollama
@@ -1264,6 +1272,25 @@ export class OllamaService {
       throw new Error('AI service is not initialized.')
     }
 
+    const cached = OllamaService.remoteModelCache
+    if (cached && cached.url === this.baseUrl && cached.expiresAt > Date.now()) {
+      return includeEmbeddings ? cached.models : cached.models.filter((m) => !m.name.includes('embed'))
+    }
+
+    // A known OpenAI-compatible backend does not implement Ollama native APIs.
+    // Avoid a 5s /api/tags timeout on every navigation after the first probe.
+    if (this.isOllamaNative === false) {
+      try {
+        const response = await this.openai!.models.list()
+        const models: NomadInstalledModel[] = installedModelsFromOpenAIResponse(response)
+        OllamaService.remoteModelCache = { url: this.baseUrl, expiresAt: Date.now() + 30_000, models }
+        return includeEmbeddings ? models : models.filter((m) => !m.name.includes('embed'))
+      } catch (err) {
+        logger.warn('[OllamaService] Provider model listing failed: ' + String(err))
+        return []
+      }
+    }
+
     try {
       // Prefer the Ollama native endpoint which includes size and metadata
       const response = await axios.get(`${this.baseUrl}/api/tags`, { timeout: 5000 })
@@ -1293,6 +1320,7 @@ export class OllamaService {
       try {
         const modelList = await this.openai!.models.list()
         const models: NomadInstalledModel[] = installedModelsFromOpenAIResponse(modelList)
+        OllamaService.remoteModelCache = { url: this.baseUrl, expiresAt: Date.now() + 30_000, models }
         if (includeEmbeddings) return models
         return models.filter((m) => !m.name.includes('embed'))
       } catch (err) {

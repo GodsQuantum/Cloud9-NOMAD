@@ -59,3 +59,18 @@ export function getServiceLink(ui_location: string, customUrl?: string | null): 
 
     return `/${ui_location}`;
 }
+
+/**
+ * Cloud9 NOMAD Kiwix book shortcut. Resolve the current LAN host, not a fixed
+ * 192.168.x.x address, to preserve access through local DNS or a tunnel.
+ * Kiwix uses its existing port 8090; never infer that the admin serves its PDFs.
+ */
+export function offlineLibraryUrl(book: string, kiwixLocation?: string | null): string {
+    const hostname = typeof window === 'undefined' ? 'localhost' : window.location.hostname
+    const fallback = `http://${hostname}:8090`
+    const resolved = kiwixLocation ? getServiceLink(kiwixLocation) : fallback
+    const base = /^https?:\/\//i.test(resolved) ? resolved : fallback
+    // Let Kiwix redirect to each archive's actual home page. Not all ZIMs
+    // contain an index.html (e.g. Wikipedia, WikiMed, Wikibooks).
+    return `${base.replace(/\/+$/, '')}/content/${encodeURIComponent(book)}/`
+}

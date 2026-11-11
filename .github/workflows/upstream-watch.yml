@@ -1,0 +1,28 @@
+name: Track official Project NOMAD releases
+on:
+  schedule:
+    - cron: "45 6 * * 1"
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Report newer stable upstream releases
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          baseline="$(cat .github/upstream-baseline.txt)"
+          latest="$(gh api repos/Crosstalk-Solutions/project-nomad/releases/latest --jq '.tag_name')"
+          test -n "$latest"
+          if [ "$latest" = "$baseline" ]; then exit 0; fi
+          title="Review Project NOMAD stable upstream $latest"
+          if gh issue list --state open --limit 100 --json title --jq '.[].title' | grep -Fx "$title" >/dev/null; then
+            exit 0
+          fi
+          gh issue create --title "$title" --body "New stable release $latest (baseline $baseline). Rebase the portable UI, French localization, education/resilience navigation and AI gateway changes. Test typecheck, localization, native ZIM and E2E before adopting. Never merge or deploy automatically."

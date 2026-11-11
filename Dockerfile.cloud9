@@ -1,0 +1,10 @@
+# Build from the pinned official runtime to retain Creator Packs and other base features.
+# Context: small, disposable export of compiled /app from local source-built Cloud9 image.
+FROM ghcr.io/crosstalk-solutions/project-nomad:v1.35.1
+COPY app/ /app/app/
+# The Inertia shared props need the matching compiled config.
+COPY config/ /app/config/
+COPY public/ /app/public/
+COPY inertia/ /app/inertia/
+COPY docs/ /app/docs/
+COPY version.json /app/version.json

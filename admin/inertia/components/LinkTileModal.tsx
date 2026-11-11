@@ -22,7 +22,7 @@ interface LinkTileModalProps {
  * Create or edit a dashboard link: a shortcut to something the user already runs.
  *
  * One URL field rather than separate host/port/path. People paste URLs, and it
- * gets https and sub-paths for free. A bare "192.168.1.50:8080" is accepted and
+ * gets https and sub-paths for free. A bare "192.0.2.13:8080" is accepted and
  * gains http:// automatically, which is what most LAN devices need.
  */
 export default function LinkTileModal({
@@ -118,14 +118,14 @@ export default function LinkTileModal({
           <Input
             name="linkUrl"
             label="URL"
-            placeholder="192.168.1.50:8080"
+            placeholder="192.0.2.13:8080"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             error={urlInvalid}
           />
           {urlInvalid ? (
             <p className="mt-1.5 text-xs text-red-500">
-              Enter a valid URL, for example 192.168.1.50:8080 or https://nas.local.
+              Enter a valid URL, for example 192.0.2.13:8080 or https://nas.local.
             </p>
           ) : (
             <p className="mt-1.5 text-xs text-text-muted">

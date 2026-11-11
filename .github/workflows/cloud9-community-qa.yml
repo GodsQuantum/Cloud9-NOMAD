@@ -1,0 +1,33 @@
+name: Cloud9 NOMAD community source quality
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: admin/package-lock.json
+      - name: Reject private deployment identifiers in added code
+        run: python3 .github/scripts/check_privacy.py HEAD^ HEAD
+      - name: Install upstream admin dependencies
+        working-directory: admin
+        run: npm ci --no-audit --no-fund
+      - name: TypeScript typecheck
+        working-directory: admin
+        run: npm run typecheck
+      - name: Validate TSX and French translation inventory
+        run: node scripts/cloud9-i18n-audit.cjs
+      # Full unit tests require libzim native bindings for the target Node ABI.
+      # Do not claim a full green unit suite without native ABI verification.

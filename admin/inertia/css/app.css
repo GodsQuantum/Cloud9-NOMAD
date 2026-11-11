@@ -223,3 +223,192 @@ body {
 .themed-scrollbar:focus::-webkit-scrollbar-thumb:hover {
   background-color: var(--color-text-muted);
 }
+
+
+/* NOMAD Aero: translucent navigation, readable opaque content, no extra libraries */
+.nomad-aero-home { position:relative; isolation:isolate; padding-bottom:1.5rem; }
+.nomad-aero-home::before { content:""; position:absolute; inset:0; z-index:-1; pointer-events:none; background:radial-gradient(ellipse 70% 40% at 5% 14%,rgba(89,166,194,.16),transparent 76%),radial-gradient(ellipse 55% 34% at 96% 48%,rgba(117,129,220,.13),transparent 76%); }
+.nomad-aero-hero { background:linear-gradient(116deg,color-mix(in srgb,var(--color-surface-primary) 93%,#cce6f5),color-mix(in srgb,var(--color-surface-primary) 88%,#dcddff)); border-color:color-mix(in srgb,var(--color-border-default) 72%,white); box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 22px 65px rgba(39,63,84,.1),0 4px 16px rgba(39,63,84,.05); }
+.nomad-aero-toolbar { background:color-mix(in srgb,var(--color-surface-primary) 93%,transparent); box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 12px 34px rgba(22,39,57,.065); }
+.nomad-aero-orb { background:radial-gradient(circle at 30% 35%,rgba(126,211,242,.31),rgba(117,148,246,.15) 52%,transparent 75%); filter:blur(6px); animation:nomad-aero-float 13s ease-in-out infinite alternate; }
+.nomad-aero-orb-secondary { background:radial-gradient(circle,rgba(196,147,255,.16),transparent 68%); filter:blur(13px); animation:nomad-aero-float 17s ease-in-out infinite alternate-reverse; }
+.nomad-aero-stat { background:color-mix(in srgb,var(--color-surface-secondary) 90%,transparent); box-shadow:inset 0 1px 0 rgba(255,255,255,.38); }
+.nomad-aero-card { position:relative; overflow:hidden; background:linear-gradient(155deg,color-mix(in srgb,var(--color-surface-primary) 96%,#dfeefd),var(--color-surface-primary) 75%); border-color:color-mix(in srgb,var(--color-border-default) 80%,transparent); box-shadow:0 6px 16px rgba(37,55,77,.06),0 1px 3px rgba(37,55,77,.04),inset 0 1px 0 rgba(255,255,255,.52); transform:perspective(1100px) rotateX(0deg) rotateY(0deg); transition:transform 240ms cubic-bezier(.2,.7,.2,1),box-shadow 240ms ease,border-color 240ms ease; }
+.nomad-aero-card::before { content:""; position:absolute; inset:0 0 auto; height:40%; border-radius:inherit; background:linear-gradient(170deg,rgba(255,255,255,.12),transparent); pointer-events:none; }
+.nomad-aero-icon { position:relative; background:linear-gradient(145deg,color-mix(in srgb,var(--color-desert-green-lighter) 76%,white),color-mix(in srgb,var(--color-surface-secondary) 94%,#d5eaf4)); border:1px solid color-mix(in srgb,var(--color-border-subtle) 62%,transparent); box-shadow:inset 0 1px 0 rgba(255,255,255,.65),0 8px 20px rgba(46,74,102,.09); transition:transform 240ms ease; }
+.nomad-aero-favorite { z-index:2; min-width:40px; min-height:40px; display:grid; place-items:center; }
+.nomad-aero-filter { transition:box-shadow 180ms ease,transform 180ms ease; }
+.nomad-aero-filter[aria-pressed="true"] { box-shadow:0 4px 13px rgba(31,44,27,.16); }
+@media (hover:hover) and (pointer:fine) {
+  .nomad-aero-grid > .group:hover .nomad-aero-card, .nomad-aero-grid > .nomad-aero-card:hover { transform:perspective(1100px) translateY(-5px) rotateX(2.5deg) rotateY(-1.3deg); border-color:color-mix(in srgb,var(--color-desert-green) 32%,var(--color-border-default)); box-shadow:0 22px 44px rgba(42,68,96,.14),0 6px 13px rgba(42,68,96,.065),inset 0 1px 0 rgba(255,255,255,.7); }
+  .nomad-aero-grid > .group:hover .nomad-aero-icon { transform:translateY(-2px) scale(1.035); }
+  .nomad-aero-filter:hover { transform:translateY(-1px); }
+}
+@supports (backdrop-filter:blur(1px)) { .nomad-aero-hero { backdrop-filter:blur(16px) saturate(135%); } .nomad-aero-toolbar { backdrop-filter:blur(12px) saturate(125%); } }
+[data-theme="dark"] .nomad-aero-hero,[data-theme="dark"] .nomad-aero-toolbar { border-color:var(--color-border-default);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 20px 55px rgba(0,0,0,.23); }
+[data-theme="dark"] .nomad-aero-card { border-color:var(--color-border-default);box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 8px 19px rgba(0,0,0,.16); }
+@keyframes nomad-aero-float { from { transform:translate3d(0,0,0) scale(1); } to { transform:translate3d(-12px,13px,0) scale(1.08); } }
+@media (prefers-reduced-motion:reduce) { .nomad-aero-home *, .nomad-aero-home *::before, .nomad-aero-home *::after { animation:none !important;transition-duration:.01ms !important; } .nomad-aero-card,.nomad-aero-grid > .group:hover .nomad-aero-card,.nomad-aero-grid > .nomad-aero-card:hover { transform:none !important; } }
+@media (prefers-reduced-transparency:reduce),(forced-colors:active) { .nomad-aero-hero,.nomad-aero-toolbar,.nomad-aero-stat,.nomad-aero-card { background:var(--color-surface-primary);backdrop-filter:none; } }
+@media (max-width:480px) { .nomad-aero-card { transform:none; } .nomad-aero-hero { border-radius:1.5rem; } }
+
+
+/* NOMAD Resilience — shared shell inspired by the approved visual reference. */
+body.nomad-resilience-body { background:#080b08 !important; color:#e8e9da; }
+.nomad-resilience {
+  --color-desert-sand:#080b08; --color-desert-white:#131912;
+  --color-desert-green:#8eae57; --color-desert-green-light:#526b3c;
+  --color-desert-green-lighter:#273426; --color-surface-primary:#121711;
+  --color-surface-secondary:#1a2118; --color-surface-elevated:#232c21;
+  --color-text-primary:#e8e9da; --color-text-secondary:#adb6a5;
+  --color-text-muted:#909d8b; --color-border-default:#33402d;
+  --color-border-subtle:#293328; --color-btn-green-hover:#96b65b;
+  --color-btn-green-active:#718d46;
+  background:#080b08; color:var(--color-text-primary);
+  min-height:100vh; font-family:Inter,ui-sans-serif,system-ui,sans-serif;
+}
+.nomad-resilience .bg-white { background-color:#161b15 !important; }
+.nomad-resilience .text-black { color:#e8e9da !important; }
+.nomad-resilience button,.nomad-resilience a { -webkit-tap-highlight-color:transparent; }
+.nomad-resilience :focus-visible { outline:2px solid #b2d277 !important; outline-offset:3px; }
+.nomad-skip-link { position:absolute; z-index:100; left:16px; top:-100px; padding:12px; background:#a7c771; color:#080b08; }
+.nomad-skip-link:focus { top:12px; }
+.nomad-resilience-topbar { display:flex; align-items:center; min-height:76px; background:#0c100c; border-bottom:1px solid #39412f; gap:12px; padding:10px 22px; }
+.nomad-top-brand { flex:none; display:flex; gap:10px; align-items:center; text-decoration:none; color:#f1eee0; min-width:172px; border-right:1px solid #3f4636; padding-right:20px; }
+.nomad-top-brand img { filter:sepia(.8) hue-rotate(28deg) brightness(1.25); object-fit:contain; }
+.nomad-top-brand span,.nomad-top-status span,.nomad-top-energy span { display:flex;flex-direction:column; }
+.nomad-top-brand small { font-size:12px;letter-spacing:.14em;line-height:1.1; }
+.nomad-top-brand strong { font-size:20px;letter-spacing:.07em;line-height:1.2; }
+.nomad-top-statuses { display:flex;justify-content:space-between;flex:1;min-width:0; }
+.nomad-top-status { display:flex;align-items:center;gap:10px;min-width:0;padding:0 13px;border-right:1px solid #394131; }
+.nomad-top-status svg { flex:none;color:#94bf59; }
+.nomad-top-status strong,.nomad-top-energy strong { font-size:13px;font-weight:700;white-space:nowrap; }
+.nomad-top-status small,.nomad-top-energy small { font-size:11px;color:#aab5a0;white-space:nowrap; }
+.nomad-top-energy { color:#eac579;display:flex;align-items:center;gap:8px;padding:0 8px; }
+.nomad-top-locale { flex:none; }
+.nomad-locale-toggle { border:1px solid #45513b;border-radius:8px;padding:8px 11px;color:#e8e9da;min-width:44px;min-height:44px; }
+.nomad-menu-toggle { display:none;align-items:center;justify-content:center;min-width:44px;min-height:44px;color:#e5e7d9; }
+.nomad-resilience-frame { display:flex;align-items:stretch;min-height:calc(100vh - 130px); }
+.nomad-resilience-sidebar { flex:0 0 205px;background:#0b100b;border-right:1px solid #3c4535;padding:20px 12px;display:flex;flex-direction:column; }
+.nomad-nav-subtitle { color:#8a977f;font-size:10px;font-weight:750;letter-spacing:.17em;padding:5px 12px 17px; }
+.nomad-resilience-sidebar nav { display:flex;flex-direction:column;gap:7px; }
+.nomad-nav-item { display:flex;align-items:center;gap:12px;color:#e5e7d8;padding:12px 13px;min-height:46px;text-decoration:none;border-radius:10px;font-size:13px;font-weight:550;transition:background-color .15s ease; }
+.nomad-nav-item svg { flex:none;color:#cbd3b7; }
+.nomad-nav-item:hover,.nomad-nav-active { background:#303c25;color:#f6f5e6; }
+.nomad-nav-active svg { color:#bada89; }
+.nomad-nav-footer { margin-top:auto;border-top:1px solid #394131;padding:21px 12px 4px;color:#a9c88a;display:flex;flex-wrap:wrap;align-items:center;gap:8px; }
+.nomad-nav-footer span {font-size:12px;font-weight:700;letter-spacing:.12em;}
+.nomad-nav-footer small { flex:0 0 100%;font-size:11px;color:#8a9685; }
+.nomad-resilience-main { flex:1;min-width:0; background:#080b08; }
+.nomad-inner-content { min-height:calc(100vh - 150px); }
+.nomad-resilience-footer { display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center;background:#0c100c;border-top:1px solid #3b4634;color:#b9c2ae;padding:13px 20px;font-size:11px; }
+.nomad-resilience-footer span { display:inline-flex;align-items:center;gap:7px; }
+.nomad-resilience .nomad-aero-home { background:transparent; }
+.nomad-resilience .nomad-aero-home::before { display:none; }
+.nomad-resilience-hero { position:relative;overflow:hidden;margin:16px 14px 12px;border-radius:17px;border:1px solid #394432;min-height:230px;background:#111810; }
+.nomad-resilience-hero-picture { position:absolute;inset:0;background-image:linear-gradient(90deg,rgba(7,11,8,.96) 0%,rgba(7,11,8,.83) 35%,rgba(7,11,8,.14) 79%),url('/nomad-resilience-scene.webp');background-position:center,center;background-size:cover; }
+.nomad-resilience-hero-content {position:relative;z-index:1;padding:45px 35px;max-width:720px;}
+.nomad-hero-eyebrow {font-size:10px;letter-spacing:.2em;color:#a6be86;font-weight:700;margin-bottom:14px;}
+.nomad-resilience-hero h1 {font-size:clamp(28px,3.8vw,48px);font-weight:300;letter-spacing:.03em;color:#efedde;line-height:1.12;}
+.nomad-resilience-hero h1 strong {font-weight:850;letter-spacing:.07em;}
+.nomad-resilience-hero h1 em {font-size:.6em;color:#8eab60;margin-left:10px;font-style:normal;}
+.nomad-hero-heading {font-size:clamp(15px,1.7vw,23px);margin-top:10px;color:#e2e5d6;}
+.nomad-hero-tagline {font-size:12px;margin-top:15px;color:#bbc5b1;}
+.nomad-resilience-dashboard { display:grid;grid-template-columns:minmax(0,1fr) 255px;gap:15px;margin:0 14px 24px; }
+.nomad-resilience-dashboard-primary { min-width:0; }
+.nomad-missions {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;}
+.nomad-mission-card {position:relative;min-height:244px;padding:22px 18px 18px;display:flex;flex-direction:column;overflow:hidden;border:1px solid #506043;border-radius:12px;background:linear-gradient(150deg,#1b2219 0%,#0f150e 100%);color:#f0f0df;text-decoration:none;transition:border-color .2s ease,transform .2s ease;}
+.nomad-mission-card:hover {border-color:#9fc36b;transform:translateY(-2px);}
+.nomad-mission-card svg {position:relative;z-index:1;color:#c9d8b0;flex:none;margin-bottom:20px;}
+.nomad-mission-art {position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 88% 16%,rgba(152,188,103,.16),transparent 65%); }
+.nomad-mission-medical .nomad-mission-art {background:radial-gradient(circle at 90% 20%,rgba(201,109,76,.21),transparent 65%);}
+.nomad-mission-power .nomad-mission-art {background:radial-gradient(circle at 90% 20%,rgba(225,160,64,.19),transparent 65%);}
+.nomad-mission-card h2 {position:relative;z-index:1;font-size:clamp(16px,1.55vw,22px);line-height:1.12;font-weight:750;letter-spacing:-.03em;margin-bottom:9px;}
+.nomad-mission-card p {position:relative;z-index:1;color:#d1d7c5;font-size:12px;line-height:1.35;}
+.nomad-mission-description {color:#9ba995;font-size:11px;line-height:1.35;margin-top:4px;}
+.nomad-mission-bottom {display:flex;align-items:end;justify-content:space-between;gap:5px;margin-top:auto;padding-top:22px;}
+.nomad-mission-bottom strong {color:#a9d276;background:#253b21;border-radius:7px;padding:7px 9px;font-size:10px;font-weight:800;letter-spacing:.04em;}
+.nomad-mission-bottom small {font-size:10px;max-width:92px;text-align:right;color:#cbd3be;}
+.nomad-quick-actions {margin-top:19px;}
+.nomad-quick-actions h2 {font-size:13px;letter-spacing:.07em;font-weight:800;border-bottom:1px solid #35422f;padding:0 4px 11px;}
+.nomad-quick-actions h2 span {color:#e58c70;font-weight:900;font-size:18px;margin-right:9px;}
+.nomad-quick-grid {display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;margin-top:13px;}
+.nomad-quick-action {display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;min-height:96px;padding:10px;color:#e7e9dc;background:#1b2618;border:1px solid #465c35;border-radius:11px;text-decoration:none;font-size:12px;font-weight:650;}
+.nomad-quick-action svg {color:#a8d374;}
+.nomad-quick-action:nth-child(2) {border-color:#855246;background:#291c19;}
+.nomad-quick-action:nth-child(2) svg {color:#de987b;}
+.nomad-quick-action:nth-child(4) {border-color:#7b623c;background:#2a2418;}
+.nomad-quick-action:nth-child(4) svg {color:#ecc073;}
+.nomad-situation-panel {background:#0f140f;border:1px solid #394932;border-radius:11px;padding:17px 15px;margin-bottom:12px;}
+.nomad-situation-panel h2 {display:flex;align-items:center;gap:9px;font-size:15px;letter-spacing:.025em;font-weight:780;padding-bottom:13px;}
+.nomad-situation-panel h2 svg {color:#a4cc70;}
+.nomad-situation-row {display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 0;border-top:1px solid #283528;}
+.nomad-situation-row span {display:flex;align-items:center;gap:8px;color:#c6d2bc;font-size:12px;}
+.nomad-situation-row span svg {color:#a8cc80;flex:none;}
+.nomad-situation-row strong {color:#bad58f;font-size:11px;text-align:right;}
+.nomad-emergency-status {text-align:left;}
+.nomad-emergency-indeterminate {color:#e9c987;font-size:24px;font-weight:800;margin:10px 0;}
+.nomad-emergency-status p:not(.nomad-emergency-indeterminate){font-size:12px;line-height:1.55;color:#b6c1ad;}
+.nomad-emergency-status a {display:inline-flex;margin-top:16px;padding:9px 13px;border-radius:8px;background:#394a2d;color:#e6f0d2;font-size:12px;text-decoration:none;}
+.nomad-resilience .nomad-aero-toolbar {backdrop-filter:none;box-shadow:none;border-color:#33412d;background:#121912;}
+.nomad-resilience .nomad-aero-card {transform:none;background:#151c13;color:#e8e9da;box-shadow:none;border-color:#3d5036;}
+.nomad-resilience .nomad-aero-card::before {display:none;}
+.nomad-resilience .nomad-aero-icon {background:#293923;color:#c4da9c;box-shadow:none;}
+.nomad-resilience .nomad-aero-filter[aria-pressed="true"]{background:#395029;color:#edf2df;border-color:#6f9150;}
+.nomad-resilience .nomad-aero-hero {display:none;}
+.nomad-resilience .nomad-resilience-main .bg-surface-primary {background-color:var(--color-surface-primary);}
+.nomad-nav-scrim {display:none;}
+@media(max-width:1250px){
+ .nomad-top-status:nth-child(4) {display:none;}
+ .nomad-resilience-dashboard {grid-template-columns:minmax(0,1fr) 235px;}
+ .nomad-missions {grid-template-columns:repeat(2,minmax(0,1fr));}
+ .nomad-mission-card {min-height:206px;}
+}
+@media(max-width:900px){
+ .nomad-menu-toggle {display:flex;}
+ .nomad-top-status:nth-child(n+3) {display:none;}
+ .nomad-resilience-sidebar {position:fixed;top:76px;bottom:0;left:0;z-index:65;overflow-y:auto;width:255px;transform:translateX(-105%);transition:transform .2s ease;box-shadow:12px 0 30px rgba(0,0,0,.35);}
+ .nomad-resilience-sidebar.nomad-nav-open{transform:translateX(0);}
+ .nomad-nav-scrim {display:block;position:fixed;inset:76px 0 0;z-index:64;background:rgba(0,0,0,.7);}
+ .nomad-resilience-dashboard {grid-template-columns:1fr;}
+ .nomad-resilience-situation {display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+ .nomad-top-energy {margin-left:auto;}
+}
+@media(max-width:580px){
+ .nomad-resilience-topbar {padding:9px 12px;gap:8px;min-height:66px;}
+ .nomad-top-brand {min-width:0;padding-right:0;border:0;}
+ .nomad-top-brand img {width:29px;height:29px;}
+ .nomad-top-brand small {font-size:9px;}
+ .nomad-top-brand strong {font-size:15px;}
+ .nomad-top-statuses {display:none;}
+ .nomad-top-energy strong {font-size:10px;}
+ .nomad-top-energy small {font-size:9px;}
+ .nomad-resilience-sidebar {top:66px;}
+ .nomad-nav-scrim {inset:66px 0 0;}
+ .nomad-resilience-hero {margin:10px 9px;min-height:180px;}
+ .nomad-resilience-hero-content {padding:28px 20px;}
+ .nomad-resilience-dashboard {margin:0 9px 16px;}
+ .nomad-missions {grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;}
+ .nomad-mission-card {padding:17px 13px;min-height:250px;}
+ .nomad-mission-card svg {margin-bottom:16px;}
+ .nomad-mission-card h2 {font-size:17px;}
+ .nomad-quick-grid {grid-template-columns:repeat(2,minmax(0,1fr));}
+ .nomad-resilience-situation {grid-template-columns:1fr;}
+ .nomad-resilience-footer {justify-content:center;}
+}
+@media(max-width:360px){.nomad-missions {grid-template-columns:1fr;}.nomad-mission-card {min-height:190px;}}
+@media(prefers-reduced-motion:reduce) {
+ .nomad-resilience *, .nomad-resilience *::before, .nomad-resilience *::after {animation:none!important;transition:none!important;scroll-behavior:auto!important;}
+ .nomad-mission-card:hover {transform:none;}
+}
+@media(forced-colors:active){.nomad-mission-card,.nomad-situation-panel,.nomad-nav-item {border:1px solid CanvasText;}}
+
+
+.nomad-resilience-setup-actions {margin:0 14px 12px;padding:16px 20px;background:#111811;border:1px solid #394831;border-radius:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.nomad-resilience-setup-actions strong {font-size:12px;letter-spacing:.12em;color:#cbd8b0;}
+.nomad-resilience-setup-actions p {font-size:12px;color:#aebaaa;margin-top:4px;line-height:1.5;}
+.nomad-setup-buttons {display:flex;gap:9px;flex-wrap:wrap;}
+.nomad-setup-buttons>a,.nomad-setup-buttons>button {display:inline-flex;align-items:center;gap:7px;min-height:44px;padding:10px 13px;border-radius:9px;border:1px solid #5b7543;background:#273a23;color:#e3ead6;text-decoration:none;font-size:12px;font-weight:700;}
+.nomad-setup-buttons>button {background:#374e2b;color:#f1f5e3;}
+.nomad-setup-buttons>a:hover,.nomad-setup-buttons>button:hover {border-color:#b1d281;}
+@media(max-width:580px){.nomad-resilience-setup-actions {margin:0 9px 11px;padding:16px;}.nomad-setup-buttons>a,.nomad-setup-buttons>button{flex:1;justify-content:center;}}

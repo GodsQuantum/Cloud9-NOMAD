@@ -1,4 +1,6 @@
 import KVStore from '#models/kv_store'
+import Service from '#models/service'
+import { SERVICE_NAMES } from '../constants/service_names.js'
 import { SystemService } from '#services/system_service'
 import { defineConfig } from '@adonisjs/inertia'
 import type { InferSharedProps } from '@adonisjs/inertia/types'
@@ -20,6 +22,20 @@ const inertiaConfig = defineConfig({
    */
   sharedData: {
     appVersion: () => SystemService.getAppVersion(),
+    // Use the configured Kiwix link (including an HTTPS reverse proxy) on every
+    // page. Do not reconstruct a port from the NOMAD dashboard's hostname.
+    kiwixNavLocation: async () => {
+      try {
+        const service = await Service.query()
+          .where('service_name', SERVICE_NAMES.KIWIX)
+          .where('installed', true)
+          .select('custom_url', 'ui_location')
+          .first()
+        return service?.custom_url || service?.ui_location || null
+      } catch {
+        return null
+      }
+    },
     environment: process.env.NODE_ENV || 'production',
     aiAssistantName: async () => {
       const now = Date.now()

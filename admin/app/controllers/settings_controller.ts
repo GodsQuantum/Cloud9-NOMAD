@@ -88,7 +88,9 @@ export default class SettingsController {
     // a model whose metadata can't be read simply doesn't get a badge.
     const resolvedContextWindows: Record<string, number> = {}
     await Promise.all(
-      (installedModels || []).map(async (model) => {
+      // Gateways can list thousands of virtual IDs: avoid thousands of /api/show
+      // probes on the settings page. Ollama installs have small local model lists.
+      (installedModels.length > 100 ? [] : installedModels).map(async (model) => {
         try {
           resolvedContextWindows[model.name] = await this.contextWindowService.windowFor(model.name)
         } catch {

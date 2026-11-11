@@ -1,6 +1,6 @@
 import Markdoc from '@markdoc/markdoc'
 import { streamToString } from '../../util/docs.js'
-import { getFile, getFileStatsIfExists, listDirectoryContentsRecursive } from '../utils/fs.js'
+import { getFile, getFileStatsIfExists, listDirectoryContents } from '../utils/fs.js'
 import path from 'path'
 import InternalServerErrorException from '#exceptions/internal_server_error_exception'
 import logger from '@adonisjs/core/services/logger'
@@ -22,7 +22,7 @@ export class DocsService {
   }
 
   async getDocs() {
-    const contents = await listDirectoryContentsRecursive(this.docsPath)
+    const contents = await listDirectoryContents(this.docsPath)
     const files: Array<{ title: string; slug: string }> = []
 
     for (const item of contents) {
@@ -62,7 +62,7 @@ export class DocsService {
     }
   }
 
-  async parseFile(_filename: string) {
+  async parseFile(_filename: string, locale: 'en' | 'fr' = 'en') {
     try {
       if (!_filename) {
         throw new Error('Filename is required')
@@ -71,8 +71,8 @@ export class DocsService {
       const filename = _filename.endsWith('.md') ? _filename : `${_filename}.md`
 
       // Prevent path traversal — resolved path must stay within the docs directory
-      const basePath = path.resolve(this.docsPath)
-      const fullPath = path.resolve(path.join(this.docsPath, filename))
+      const basePath = path.resolve(locale === 'fr' ? path.join(this.docsPath, 'fr') : this.docsPath)
+      const fullPath = path.resolve(path.join(basePath, filename))
       if (!fullPath.startsWith(basePath + path.sep)) {
         throw new Error('Invalid document slug')
       }

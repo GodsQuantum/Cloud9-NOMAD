@@ -26,7 +26,7 @@ import {
 } from '../../constants/link_tile_colors.js'
 
 test('a bare host:port gains http, which is what most LAN devices need', () => {
-  assert.equal(normalizeCustomUrl('192.168.1.50:8080'), 'http://192.168.1.50:8080/')
+  assert.equal(normalizeCustomUrl('192.0.2.13:8080'), 'http://192.0.2.13:8080/')
   assert.equal(normalizeCustomUrl('nas.local'), 'http://nas.local/')
 })
 
@@ -36,7 +36,7 @@ test('an explicit https scheme is preserved rather than downgraded', () => {
 })
 
 test('a path survives normalisation', () => {
-  assert.equal(normalizeCustomUrl('192.168.1.50:8080/admin'), 'http://192.168.1.50:8080/admin')
+  assert.equal(normalizeCustomUrl('192.0.2.13:8080/admin'), 'http://192.0.2.13:8080/admin')
   assert.equal(normalizeCustomUrl('https://nas.local/ui/dashboard'), 'https://nas.local/ui/dashboard')
 })
 
@@ -48,7 +48,7 @@ test('a query string and port are both kept', () => {
 })
 
 test('surrounding whitespace is trimmed', () => {
-  assert.equal(normalizeCustomUrl('   192.168.1.50:8080   '), 'http://192.168.1.50:8080/')
+  assert.equal(normalizeCustomUrl('   192.0.2.13:8080   '), 'http://192.0.2.13:8080/')
 })
 
 test('empty input is null, not an error', () => {

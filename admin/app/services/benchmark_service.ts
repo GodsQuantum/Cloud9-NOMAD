@@ -167,7 +167,7 @@ const AI_BENCHMARK_RUNS = 3
  * reaches the container itself, so it is unlikely to have been saved, but it
  * unambiguously is not another machine).
  *
- * A LAN address is DELIBERATELY NOT exempt. `192.168.1.50` is indistinguishable
+ * A LAN address is DELIBERATELY NOT exempt. `192.0.2.13` is indistinguishable
  * from another box on the same network, and wrongly exempting one would let a
  * genuinely remote GPU's throughput be attributed to this hardware. False
  * blocks are recoverable by clearing the setting; a false pass silently

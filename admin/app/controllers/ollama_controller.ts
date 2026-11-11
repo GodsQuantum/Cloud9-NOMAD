@@ -397,7 +397,9 @@ export default class OllamaController {
       return { configured: false, connected: false }
     }
     try {
+      const scopedKey = process.env.NOMAD_OPENAI_API_KEY?.trim()
       const testResponse = await fetch(`${remoteUrl.replace(/\/$/, '')}/v1/models`, {
+        headers: scopedKey ? { Authorization: 'Bearer ' + scopedKey } : undefined,
         signal: AbortSignal.timeout(3000),
       })
       return { configured: true, connected: testResponse.ok }
@@ -442,7 +444,9 @@ export default class OllamaController {
 
     // Test connectivity via OpenAI-compatible /v1/models endpoint (works with Ollama, LM Studio, llama.cpp, etc.)
     try {
+      const scopedKey = process.env.NOMAD_OPENAI_API_KEY?.trim()
       const testResponse = await fetch(`${remoteUrl.replace(/\/$/, '')}/v1/models`, {
+        headers: scopedKey ? { Authorization: `Bearer ${scopedKey}` } : undefined,
         signal: AbortSignal.timeout(5000),
       })
       if (!testResponse.ok) {
@@ -550,6 +554,9 @@ export default class OllamaController {
   async installedModels({}: HttpContext) {
     const models = await this.ollamaService.getModels()
     // Enrich from backend-reported capabilities; never guess from model names.
+    // Router catalogues expose thousands of virtual IDs; never fan out
+    // thousands of per-model capability probes for the model picker.
+    if (models.length > 100) return models
     const capabilities = await Promise.all(
       models.map((m) => this.ollamaService.getModelCapabilities(m.name, m))
     )
