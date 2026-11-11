@@ -64,6 +64,9 @@ jobs:
             test -z "$(printenv CREATOR_PACKS_APP_KEY)"
             echo NOMAD_IMAGE_STRUCTURE_AND_NO_CREATOR_KEY_PASS
           '
+          # Prove that the downloaded libzim 9 native addon loads, unlike
+          # the former empty npm download that failed at zim/archive.h.
+          docker run --rm --network none --entrypoint node "$ref" -e "const z=require('@openzim/libzim'); if(typeof z.Archive!=='function')process.exit(1); console.log('LIBZIM_NATIVE_RUNTIME_PASS')"
       - name: Push tested immutable candidate to GHCR
         shell: bash
         run: |

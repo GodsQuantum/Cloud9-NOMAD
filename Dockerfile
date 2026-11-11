@@ -1,4 +1,11 @@
 FROM node:22-slim AS base
+# @openzim/libzim@4.0.0 needs libzim 9.4.0 at npm install time.
+# Its published npm tarball omits .env, so the native download script
+# otherwise requests libzim_linux-x86_64-undefined.tar.gz and silently
+# continues until node-gyp fails due to missing zim/archive.h.
+# Version is sourced from openzim/node-libzim v4.0.0 .env; fail if the
+# lockfile changes, rather than rebuilding a mismatched native library.
+ENV LIBZIM_VERSION=9.4.0
 
 # Install bash & curl for entrypoint script compatibility, graphicsmagick for pdf2pic, and vips-dev & build-base for sharp 
 RUN apt-get update && apt-get install -y \
@@ -15,13 +22,13 @@ RUN apt-get update && apt-get install -y \
 FROM base AS deps
 WORKDIR /app
 ADD admin/package.json admin/package-lock.json ./
-RUN npm ci
+RUN node -e "const z=require('./package-lock.json').packages['node_modules/@openzim/libzim'].version; if(z!=='4.0.0')throw Error('Update LIBZIM_VERSION for @openzim/libzim '+z)" && npm ci
 
 # Production only deps stage
 FROM base AS production-deps
 WORKDIR /app
 ADD admin/package.json admin/package-lock.json ./
-RUN npm ci --omit=dev
+RUN node -e "const z=require('./package-lock.json').packages['node_modules/@openzim/libzim'].version; if(z!=='4.0.0')throw Error('Update LIBZIM_VERSION for @openzim/libzim '+z)" && npm ci --omit=dev
 
 # Build stage
 FROM base AS build
