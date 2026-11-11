@@ -18,6 +18,10 @@
 - **IA ouverte** : passerelle compatible OpenAI, vérification des modèles distants et embeddings configurables ; compatible avec différentes installations et non verrouillé sur une machine précise.
 - **Interface graphique cohérente** : cartes de disponibilité, grands composants adaptatifs et navigation pensée pour les petits écrans.
 
+## Langues réellement prises en charge
+
+**Anglais / français :** sélecteur présent dans l’interface (certaines cartes d’accueil restent encore en français même si l’anglais est sélectionné). **Chinois simplifié :** documentation traduite, mais **pas encore d’interface chinoise**. Le diagramme indique explicitement cette différence. Ne pas annoncer une UI trilingue avant la traduction et les tests correspondants.
+
 ## Installation et mise à jour
 
 Le code correspond à Project NOMAD avec des modifications communautaires et ne contient ni jeton, ni compte, ni partage de fichiers personnels. Réutiliser la procédure d'installation de l'[upstream](https://github.com/Crosstalk-Solutions/project-nomad) ; les services et URLs se configurent dans l'application. Aucun modèle ni catalogue propriétaire n'est livré.

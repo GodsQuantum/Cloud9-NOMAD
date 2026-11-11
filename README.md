@@ -1,5 +1,9 @@
 <p align="center"><img src="docs/assets/cloud9-nomad-logo.svg" width="930" alt="Cloud9-NOMAD — Knowledge stays, connection optional"></p>
 
+### Interface language support
+
+**English / Français:** interface toggle available today (the core landing dashboard still contains some French-only labels in English mode). **简体中文:** README/documentation only at present; there is no Chinese UI selector or complete translation catalog. The diagram distinguishes these deliberately. The upstream project's interface is English-first; expanded UI translation remains work in progress.
+
 ### Real interface previews
 
 <p align="center">

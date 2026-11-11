@@ -6,7 +6,7 @@ This repository is a public community fork of [Crosstalk-Solutions/project-nomad
 | --- | --- | --- |
 | Home | Default landing dashboard | Responsive command center, app category search, favorites and availability cues |
 | UI | Original administration layout | Low-power resilience shell and responsive navigation |
-| Language | Official upstream locales | Expanded French admin UI, offline catalog and guides, English intact |
+| Language | Original English UI | English / French UI toggle (remaining French-only home labels), Chinese-language docs only; Chinese UI not yet implemented |
 | Education | Native installed applications | Easier discovery and contextual links to installed local resources |
 | AI | Standard local integrations | Configurable remote OpenAI-compatible gateway, auth-aware preflight and explicit embedding model |
 | Privacy | Upstream defaults | Documentation-only IPs; runtime user-specific values are configured and never committed |
