@@ -1,0 +1,72 @@
+name: Cloud9-NOMAD candidate OCI (no deployment)
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'admin/**'
+      - 'collections/**'
+      - 'install/**'
+      - 'Dockerfile'
+      - '.github/workflows/cloud9-nomad-image.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  packages: write
+concurrency:
+  group: cloud9-nomad-image-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build-smoke-push:
+    runs-on: ubuntu-latest
+    timeout-minutes: 85
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build the community source from upstream-compatible Dockerfile
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          platforms: linux/amd64
+          pull: true
+          load: true
+          tags: ghcr.io/godsquantum/cloud9-nomad:sha-${{ github.sha }}
+          build-args: |
+            VERSION=1.35.1-cloud9-${{ github.sha }}
+            BUILD_DATE=${{ github.event.head_commit.timestamp }}
+            VCS_REF=${{ github.sha }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/GodsQuantum/Cloud9-NOMAD
+            org.opencontainers.image.title=Cloud9-NOMAD
+            org.opencontainers.image.description=Community Project NOMAD, English/French UI, offline resilience and configurable AI
+            org.opencontainers.image.licenses=Apache-2.0
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Sanity check compiled runtime and provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          ref="ghcr.io/godsquantum/cloud9-nomad:sha-${{ github.sha }}"
+          test "$(docker image inspect "$ref" --format '{{index .Config.Labels "org.opencontainers.image.source"}}')" = 'https://github.com/GodsQuantum/Cloud9-NOMAD'
+          test "$(docker image inspect "$ref" --format '{{index .Config.Labels "org.opencontainers.image.revision"}}')" = '${{ github.sha }}'
+          docker run --rm --network none --entrypoint /bin/sh "$ref" -c '
+            set -e
+            node --version
+            test -f /app/bin/server.js
+            test -s /app/version.json
+            test -d /app/public
+            grep -q 1.35.1-cloud9- /app/version.json
+            test -z "$(printenv CREATOR_PACKS_APP_KEY)"
+            echo NOMAD_IMAGE_STRUCTURE_AND_NO_CREATOR_KEY_PASS
+          '
+      - name: Push tested immutable candidate to GHCR
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker push "ghcr.io/godsquantum/cloud9-nomad:sha-${{ github.sha }}"
+          echo 'A candidate was published. DO NOT promote to latest or deploy until live database / service / UI E2E tests pass.'
