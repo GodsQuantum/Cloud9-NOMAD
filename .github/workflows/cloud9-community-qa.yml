@@ -21,9 +21,10 @@ jobs:
           cache-dependency-path: admin/package-lock.json
       - name: Reject private deployment identifiers in added code
         run: python3 .github/scripts/check_privacy.py HEAD^ HEAD
-      - name: Install upstream admin dependencies
+      # Typecheck and UI/i18n checks do not require loading libzim native bindings.
+      - name: Install upstream admin dependencies (no native build hooks)
         working-directory: admin
-        run: npm ci --no-audit --no-fund
+        run: npm ci --no-audit --no-fund --ignore-scripts
       - name: TypeScript typecheck
         working-directory: admin
         run: npm run typecheck
