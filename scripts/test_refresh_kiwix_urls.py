@@ -86,6 +86,24 @@ class KiwixCatalogueTests(unittest.TestCase):
         self.assertIn("zim_categories: ZIM_CATALOG_URL", text)
         self.assertNotIn("zim_categories: 'https://raw.githubusercontent.com/Crosstalk-Solutions/project-nomad", text)
 
+    def test_fork_catalogue_keeps_official_military_medicine_id(self):
+        data = json.loads((SOURCE.parents[1] / "collections/kiwix-categories.json").read_text())
+        blob = json.dumps(data)
+        self.assertIn('"id": "irp.fas.org_en_military-medicine"', blob)
+        self.assertNotIn('"id": "fas-military-medicine_en"', blob)
+
+    def test_upstream_identity_diff_fails_closed(self):
+        import importlib.util
+        path = SOURCE.with_name("verify_kiwix_catalog_ids.py")
+        spec = importlib.util.spec_from_file_location("kiwix_identity", path)
+        verifier = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(verifier)
+        orig = {"categories": [{"id": "a"}, {"id": "a"}, {"id": "b"}]}
+        changed = {"categories": [{"id": "a"}, {"id": "b"}, {"id": "c"}]}
+        self.assertEqual(verifier.verify(orig, orig), 3)
+        with self.assertRaisesRegex(RuntimeError, "IDENTITY_DRIFT"):
+            verifier.verify(changed, orig)
+
     def test_http_error_does_not_mutate_catalog(self):
         url = m.ORIGIN+"devdocs/devdocs_en_bash_2026-01.zim"
         data = {"resources": [{"id": "bash", "version": "2026-01",

@@ -5,12 +5,14 @@ on:
     paths:
       - 'collections/**.json'
       - 'scripts/refresh_kiwix_urls.py'
+      - 'scripts/verify_kiwix_catalog_ids.py'
       - 'scripts/test_refresh_kiwix_urls.py'
       - 'admin/app/services/collection_manifest_service.ts'
   pull_request:
     paths:
       - 'collections/**.json'
       - 'scripts/refresh_kiwix_urls.py'
+      - 'scripts/verify_kiwix_catalog_ids.py'
       - 'scripts/test_refresh_kiwix_urls.py'
       - 'admin/app/services/collection_manifest_service.ts'
   schedule:
@@ -24,6 +26,9 @@ jobs:
 
       - name: Verify the Kiwix URL refresh resolver offline
         run: python3 -m unittest discover -s scripts -p "test_refresh_kiwix_urls.py" -v
+
+      - name: Compare resource identities with upstream Project NOMAD
+        run: python3 scripts/verify_kiwix_catalog_ids.py
 
       - name: Extract and validate URLs
         run: |
