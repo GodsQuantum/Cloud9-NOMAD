@@ -1,5 +1,5 @@
 {
-  "spec_version": "2026-03-15",
+  "spec_version": "2026-11-13",
   "categories": [
     {
       "name": "Medicine",
@@ -31,7 +31,7 @@
               "size_mb": 16
             },
             {
-              "id": "fas-military-medicine_en",
+              "id": "irp.fas.org_en_military-medicine",
               "version": "2026-10",
               "title": "Military Medicine",
               "description": "Tactical and field medicine manuals",
