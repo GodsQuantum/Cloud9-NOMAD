@@ -4,9 +4,13 @@ on:
   push:
     paths:
       - 'collections/**.json'
+      - 'scripts/refresh_kiwix_urls.py'
+      - 'scripts/test_refresh_kiwix_urls.py'
   pull_request:
     paths:
       - 'collections/**.json'
+      - 'scripts/refresh_kiwix_urls.py'
+      - 'scripts/test_refresh_kiwix_urls.py'
   schedule:
     - cron: '17 6 * * 1'
 
@@ -15,6 +19,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+
+      - name: Verify the Kiwix URL refresh resolver offline
+        run: python3 -m unittest discover -s scripts -p "test_refresh_kiwix_urls.py" -v
 
       - name: Extract and validate URLs
         run: |
