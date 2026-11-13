@@ -79,6 +79,13 @@ class KiwixCatalogueTests(unittest.TestCase):
                 self.assertEqual(again, [])
                 self.assertEqual(saved, json.loads(file.read_text()))
 
+    def test_live_catalog_source_uses_community_manifest_with_override(self):
+        text = (SOURCE.parents[1] / "admin/app/services/collection_manifest_service.ts").read_text()
+        self.assertIn("process.env.NOMAD_ZIM_CATEGORIES_URL?.trim()", text)
+        self.assertIn("https://raw.githubusercontent.com/GodsQuantum/Cloud9-NOMAD/refs/heads/main/collections/kiwix-categories.json", text)
+        self.assertIn("zim_categories: ZIM_CATALOG_URL", text)
+        self.assertNotIn("zim_categories: 'https://raw.githubusercontent.com/Crosstalk-Solutions/project-nomad", text)
+
     def test_http_error_does_not_mutate_catalog(self):
         url = m.ORIGIN+"devdocs/devdocs_en_bash_2026-01.zim"
         data = {"resources": [{"id": "bash", "version": "2026-01",

@@ -28,8 +28,14 @@ import type {
   SpecTier,
 } from '../../types/collections.js'
 
+// Read the verified community Kiwix catalogue from this edition by default.
+// Operators may supply their own HTTPS manifest with this environment key.
+// Keep the other catalogues on upstream Project NOMAD's official sources.
+const ZIM_CATALOG_URL = process.env.NOMAD_ZIM_CATEGORIES_URL?.trim()
+  || 'https://raw.githubusercontent.com/GodsQuantum/Cloud9-NOMAD/refs/heads/main/collections/kiwix-categories.json'
+
 const SPEC_URLS: Record<ManifestType, string> = {
-  zim_categories: 'https://raw.githubusercontent.com/Crosstalk-Solutions/project-nomad/refs/heads/main/collections/kiwix-categories.json',
+  zim_categories: ZIM_CATALOG_URL,
   maps: 'https://github.com/Crosstalk-Solutions/project-nomad/raw/refs/heads/main/collections/maps.json',
   wikipedia: 'https://raw.githubusercontent.com/Crosstalk-Solutions/project-nomad/refs/heads/main/collections/wikipedia.json',
   creator_packs: 'https://raw.githubusercontent.com/Crosstalk-Solutions/project-nomad/refs/heads/main/collections/creator-packs.json',

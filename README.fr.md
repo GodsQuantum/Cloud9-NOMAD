@@ -22,6 +22,10 @@
 
 **Anglais / français :** sélecteur présent dans l’interface (certaines cartes d’accueil restent encore en français même si l’anglais est sélectionné). **Chinois simplifié :** documentation traduite, mais **pas encore d’interface chinoise**. Le diagramme indique explicitement cette différence. Ne pas annoncer une UI trilingue avant la traduction et les tests correspondants.
 
+## Catalogue Kiwix hors ligne maintenu
+
+Le catalogue de ressources Kiwix utilise par défaut le manifeste public vérifié de Cloud9-NOMAD, dont les archives sont contrôlées. La variable `NOMAD_ZIM_CATEGORIES_URL` permet de choisir un autre manifeste de confiance. La CI vérifie les liens chaque semaine ; aucune archive ZIM n’est téléchargée automatiquement.
+
 ## Installation et mise à jour
 
 Le code correspond à Project NOMAD avec des modifications communautaires et ne contient ni jeton, ni compte, ni partage de fichiers personnels. Réutiliser la procédure d'installation de l'[upstream](https://github.com/Crosstalk-Solutions/project-nomad) ; les services et URLs se configurent dans l'application. Aucun modèle ni catalogue propriétaire n'est livré.

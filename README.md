@@ -20,6 +20,10 @@
   <a href="docs/cloud9-community-features.md">What this edition adds</a>
 </p>
 
+### Maintained offline Kiwix catalogue
+
+The offline Kiwix category catalogue uses the verified public Cloud9-NOMAD manifest by default, rather than older upstream archive URLs. Set `NOMAD_ZIM_CATEGORIES_URL` to a different trusted manifest URL if required. The weekly URL CI and a fail-closed on-demand resolver validate/download metadata only; ZIM archives are **not** downloaded automatically.
+
 ### Extra capabilities over upstream Project NOMAD
 
 - **Responsive command center:** searchable application categories, favorites and compact navigation, with an optional low-power view.
